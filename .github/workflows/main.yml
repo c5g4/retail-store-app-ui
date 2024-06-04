@@ -48,7 +48,7 @@ jobs:
           echo "Deploying into Prod env!"
           git config --global user.email ci-bot-c5g4@test.com && git config --global user.name ci-bot-c5g4
           echo "cloning config repo $CONFIG_REPO_NAME"
-          git clone https://oauth2:${{ secrets.PAT_GH }}@github.com/${{ github.repository_owner }}/$CONFIG_REPO_NAME.git
+          git clone https://${{ secrets.PAT_GH }}@github.com/${{ github.repository_owner }}/$CONFIG_REPO_NAME.git
           cd $CONFIG_REPO_NAME
           git checkout main
           sed -i "s,tag:.*,tag:\ ${{ github.sha }}," helm/retailapp/values.yaml
