@@ -1,5 +1,15 @@
 name: Actions
-on: [push, workflow_dispatch]
+# on: [push, workflow_dispatch]
+on:
+  push:
+    # tags:
+    # - 'v*'
+    branches:
+    - Dev
+    # - feature/**
+    - Release
+    - main
+
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: retail-store-app-ui
@@ -40,6 +50,22 @@ jobs:
          daemon_off: false
          dockerfile: ./Dockerfile
          context: ./
+  DEPLOY_TO_DEV:
+    runs-on: ubuntu-latest
+    needs: BUILD_AND_PUBLISH
+    secrets: inherit
+    if: ${{ github.ref_name == 'Dev' || startsWith(github.ref_name, 'feature/') }}
+    steps:
+      - run: |
+          echo "Deploying into Prod env!"
+          git config --global user.email ci-bot-c5g4@test.com && git config --global user.name ci-bot-c5g4
+          echo "cloning config repo $CONFIG_REPO_NAME"
+          git clone https://oauth2:${{ secrets.PAT_GH }}@github.com/${{ github.repository_owner }}/$CONFIG_REPO_NAME.git
+          cd $CONFIG_REPO_NAME
+          git checkout Dev
+          sed -i "s,tag:.*,tag:\ ${{ github.sha }}," helm/retailapp/values.yaml
+          git add . && git commit -m "update image tag"
+          git push
   DEPLOY_TO_PROD:
     runs-on: ubuntu-latest
     needs: BUILD_AND_PUBLISH
