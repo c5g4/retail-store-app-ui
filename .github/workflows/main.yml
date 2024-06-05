@@ -53,7 +53,6 @@ jobs:
   DEPLOY_TO_DEV:
     runs-on: ubuntu-latest
     needs: BUILD_AND_PUBLISH
-    secrets: inherit
     if: ${{ github.ref_name == 'Dev' || startsWith(github.ref_name, 'feature/') }}
     steps:
       - run: |
