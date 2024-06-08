@@ -27,7 +27,8 @@ jobs:
           run: |
             npm install -g snyk
             snyk auth ${{ secrets.SNYK_TOKEN }}
-            snyk test
+            # snyk test
+            snyk test --file=pom.xml
             
         - name: Run Snyk IAC - Code Scan And Check Snyk Scan Results
           uses: snyk/actions/iac@master
@@ -51,6 +52,14 @@ jobs:
          distribution: 'temurin'
          java-version: '11'
 
+      - name: Build and verify with Maven
+         run: mvn --batch-mode --update-snapshots verify
+         run: mkdir staging && cp target/*.jar staging
+         uses: actions/upload-artifact@v4
+           with:
+             name: Package
+             path: staging
+ 
   BUILD_AND_PUBLISH:
     needs: Testing
     runs-on: ubuntu-latest
