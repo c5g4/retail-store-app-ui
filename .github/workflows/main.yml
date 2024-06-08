@@ -56,6 +56,8 @@ jobs:
         run: |
           mvn --batch-mode --update-snapshots verify
           mkdir staging && cp target/*.jar staging
+      
+      - name: Upload Maven log
         uses: actions/upload-artifact@v4
         with:
          name: Package
