@@ -28,6 +28,7 @@ jobs:
             echo "To do"
             echo "Add scanning"
             npm install -g snyk
+            snyk auth ${{ secrets.SNYK_TOKEN }}
             snyk test
         
   Testing:
