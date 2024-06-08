@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Run installation of dependencies commands
         run: npm install
 
@@ -20,7 +20,7 @@ jobs:
     steps:
         - name: Check out repository code
           uses: actions/checkout@v4
-          
+
         - name: Run vulernability scan
           run: |
             echo "To do"
