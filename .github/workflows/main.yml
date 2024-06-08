@@ -23,14 +23,19 @@ jobs:
         - name: Check out repository code
           uses: actions/checkout@v4
 
-        - name: Run vulernability scan
+        - name: Run vulernability scan snyk test
           run: |
-            echo "To do"
-            echo "Add scanning"
             npm install -g snyk
             snyk auth ${{ secrets.SNYK_TOKEN }}
             snyk test
-        
+            
+        - name: Run Snyk IAC - Code Scan And Check Snyk Scan Results
+          uses: snyk/actions/iac@master
+          env:
+            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          with:
+            args: "--report --severity-threshold=high --scan=resource-changes"
+            
   Testing:
     runs-on: ubuntu-latest
     steps:
