@@ -1,0 +1,29 @@
+{
+  "name": "ce5-group4-20240511",
+  "version": "1.0.0",
+  "description": "Project Init",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cmcheung001/CE5-Group4-20240511.git"
+  },
+  "keywords": [
+    "Project"
+  ],
+  "author": "JC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cmcheung001/CE5-Group4-20240511/issues"
+  },
+  "homepage": "https://github.com/cmcheung001/CE5-Group4-20240511#readme",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
