@@ -1,0 +1,23 @@
+name: CI/CD - JC Testing
+on: [push, workflow_dispatch]
+#branches:
+#  - main
+#  - Dev
+#  - 'Release/**'
+#  - 'feature/**'
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: retail-store-app-ui
+  CONFIG_REPO_NAME: retail-config
+
+jobs:
+  Check_Branch:
+    runs-on: ubuntu-latest
+    steps:
+       - name: Run installation of dependencies commands
+         run: |
+          echo "Branch is ${{github.ref}}"
+          echo "done"
+
+
