@@ -13,11 +13,12 @@ env:
   CONFIG_REPO_NAME: retail-config
 
 jobs:
-  Check Branch:
+  Check_Branch:
     runs-on: ubuntu-latest
     steps:
        - name: Run installation of dependencies commands
          run: |
-         echo "Branch = " "${GITHUB_REF}"
+          echo "Branch is ${{GITHUB_REF}}"
+          echo "done"
 
 
