@@ -1,11 +1,11 @@
 name: CI/CD - JC Testing
-on: 
+on:
   workflow_dispatch:
-  branches:
-  - main
-  - Dev
-  - Release
-  - feature
+    branches:
+     - main
+     - Dev
+     - Release
+     - feature
 
 env:
   AWS_REGION: us-east-1
