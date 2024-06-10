@@ -38,7 +38,9 @@ jobs:
             npm install -g snyk
             snyk auth ${{ secrets.SNYK_TOKEN }}
             snyk test
-            # snyk test --file=pom.xml
+            chmod +x ./mvnw
+            ./mvnw dependency:tree -DoutputType=dot --batch-mode --non-recursive --file="pom.xml"
+            snyk test --file=pom.xml
             
         #- name: Run Snyk IAC - Code Scan And Check Snyk Scan Results
         #  uses: snyk/actions/iac@master
