@@ -1,5 +1,15 @@
 name: Actions
-on: [push, workflow_dispatch]
+# on: [push, workflow_dispatch]
+on:
+  push:
+    # tags:
+    # - 'v*'
+    branches:
+    - Dev
+    # - feature/**
+    - Release
+    - main
+
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: retail-store-app-ui
@@ -27,15 +37,17 @@ jobs:
           run: |
             npm install -g snyk
             snyk auth ${{ secrets.SNYK_TOKEN }}
-            # snyk test
+            snyk test
+            chmod +x ./mvnw
+            ./mvnw dependency:tree -DoutputType=dot --batch-mode --non-recursive --file="pom.xml"
             snyk test --file=pom.xml
             
-        - name: Run Snyk IAC - Code Scan And Check Snyk Scan Results
-          uses: snyk/actions/iac@master
-          env:
-            SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-          with:
-            args: "--report --severity-threshold=high --scan=resource-changes"
+        #- name: Run Snyk IAC - Code Scan And Check Snyk Scan Results
+        #  uses: snyk/actions/iac@master
+        #  env:
+        #    SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        #  with:
+        #    args: "--report --severity-threshold=high --scan=resource-changes"
             
   Testing:
     runs-on: ubuntu-latest
@@ -82,9 +94,10 @@ jobs:
          daemon_off: false
          dockerfile: ./Dockerfile
          context: ./
-  DEPLOY_TO_PROD:
+  DEPLOY_TO_DEV:
     runs-on: ubuntu-latest
     needs: BUILD_AND_PUBLISH
+    if: ${{ github.ref_name == 'Dev' || startsWith(github.ref_name, 'feature/') }}
     steps:
       - run: |
           echo "Deploying into Prod env!"
@@ -92,7 +105,22 @@ jobs:
           echo "cloning config repo $CONFIG_REPO_NAME"
           git clone https://oauth2:${{ secrets.PAT_GH }}@github.com/${{ github.repository_owner }}/$CONFIG_REPO_NAME.git
           cd $CONFIG_REPO_NAME
-          git checkout main
+          git checkout Dev
+          sed -i "s,tag:.*,tag:\ ${{ github.sha }}," helm/retailapp/values.yaml
+          git add . && git commit -m "update image tag"
+          git push
+  DEPLOY_TO_PROD:
+    runs-on: ubuntu-latest
+    needs: BUILD_AND_PUBLISH
+    if: ${{ github.ref_name == 'Release' }}
+    steps:
+      - run: |
+          echo "Deploying into Prod env!"
+          git config --global user.email ci-bot-c5g4@test.com && git config --global user.name ci-bot-c5g4
+          echo "cloning config repo $CONFIG_REPO_NAME"
+          git clone https://oauth2:${{ secrets.PAT_GH }}@github.com/${{ github.repository_owner }}/$CONFIG_REPO_NAME.git
+          cd $CONFIG_REPO_NAME
+          git checkout Release
           sed -i "s,tag:.*,tag:\ ${{ github.sha }}," helm/retailapp/values.yaml
           git add . && git commit -m "update image tag"
           git push
